@@ -1,0 +1,23 @@
+FROM envoyproxy/envoy-dev:latest
+
+RUN apt update && apt install -y python3 bash curl \
+    python3-pip supervisor
+RUN pip3 install -q Flask==0.11.1 requests==2.18.4
+RUN mkdir /code
+ADD ./service.py /code
+ADD ./start_service.sh /usr/local/bin/start_service.sh
+RUN chmod u+x /usr/local/bin/start_service.sh
+
+# RUN export DEBIAN_FRONTEND=noninteractive
+RUN DEBIAN_FRONTEND=noninteractive apt -y -qq install krb5-admin-server
+RUN apt -y -qq install krb5-config
+RUN apt -y install vim
+RUN mkdir /usr/local/var
+RUN mkdir /usr/local/var/log
+ADD ./krb5.conf /etc
+
+ADD ./supervisor.conf /etc
+ADD ./kadmind.sv.conf /etc/supervisor/conf.d
+ADD ./kadmin.sv.conf /etc/supervisor/conf.d
+ADD ./service.sv.conf /etc/supervisor/conf.d
+CMD supervisord -c /etc/supervisor.conf
