@@ -50,4 +50,4 @@ def trace(service_number):
 
 
 if __name__ == "__main__":
-  app.run(host='service.example.com', port=8080, debug=True)
+  app.run(host='127.0.0.1', port=8080, debug=True)
