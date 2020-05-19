@@ -42,7 +42,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: service1
+                address: service.example.com
                 port_value: 80
   - name: service2
     connect_timeout: 0.25s

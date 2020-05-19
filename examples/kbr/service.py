@@ -1,11 +1,15 @@
 from flask import Flask
 from flask import request
+from flask_kerberos import requires_authentication, init_kerberos
 import os
 import requests
 import socket
 import sys
+import logging
 
 app = Flask(__name__)
+logging.basicConfig(filename='service.log', level=logging.DEBUG)
+init_kerberos(app, hostname="kbr_service1_1.kbr_envoymesh")
 
 TRACE_HEADERS_TO_PROPAGATE = [
     'X-Ot-Span-Context',
@@ -24,9 +28,10 @@ TRACE_HEADERS_TO_PROPAGATE = [
 
 
 @app.route('/service/<service_number>')
-def hello(service_number):
-  return ('Hello from behind Envoy (service {})! hostname: {} resolved'
-          'hostname: {}\n'.format(os.environ['SERVICE_NAME'], socket.gethostname(),
+@requires_authentication
+def hello(user, service_number):
+  return ('Hello, {}, from behind Envoy (service {})! hostname: {} resolved'
+          'hostname: {}\n'.format(user, os.environ['SERVICE_NAME'], socket.gethostname(),
                                   socket.gethostbyname(socket.gethostname())))
 
 
@@ -45,4 +50,4 @@ def trace(service_number):
 
 
 if __name__ == "__main__":
-  app.run(host='127.0.0.1', port=8080, debug=True)
+  app.run(host='service.example.com', port=8080, debug=True)

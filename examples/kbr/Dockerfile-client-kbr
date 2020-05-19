@@ -1,0 +1,21 @@
+FROM envoyproxy/envoy-dev:latest
+
+RUN apt update && apt install -y python3 bash curl \
+    python3-pip supervisor
+RUN apt -y -qq install libkrb5-dev
+RUN pip3 install -q requests requests_kerberos
+RUN mkdir /code
+ADD ./client.py /code
+ADD ./kinit.sh /usr/local/bin/kinit.sh
+RUN chmod u+x /usr/local/bin/kinit.sh
+
+RUN DEBIAN_FRONTEND=noninteractive apt -y -qq install krb5-admin-server
+
+RUN apt -y install vim
+RUN mkdir /usr/local/var
+RUN mkdir /usr/local/var/log
+ADD ./krb5.conf /etc
+
+ADD ./kinit.sv.conf /etc/supervisor/conf.d
+ADD ./supervisor.conf /etc
+CMD supervisord -c /etc/supervisor.conf

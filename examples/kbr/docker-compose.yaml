@@ -19,13 +19,13 @@ services:
   service1:
     build:
       context: .
-      dockerfile: Dockerfile-service
+      dockerfile: Dockerfile-service-kbr
     volumes:
       - ./service-envoy.yaml:/etc/service-envoy.yaml
     networks:
       envoymesh:
         aliases:
-          - service1
+          - service.example.com
     environment:
       - SERVICE_NAME=1
     expose:
@@ -34,17 +34,21 @@ services:
   service2:
     build:
       context: .
-      dockerfile: Dockerfile-service
-    volumes:
-      - ./service-envoy.yaml:/etc/service-envoy.yaml
+      dockerfile: Dockerfile-masterkdc
     networks:
       envoymesh:
         aliases:
-          - service2
-    environment:
-      - SERVICE_NAME=2
+          - kerberos.example.com
     expose:
-      - "80"
+      - "88"
+      - "749"
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile-client-kbr
+    networks:
+      - envoymesh
 
 networks:
   envoymesh: {}
