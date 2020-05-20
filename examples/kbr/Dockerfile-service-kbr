@@ -17,7 +17,7 @@ RUN apt -y -qq install krb5-config
 RUN apt -y -qq install libkrb5-dev
 RUN pip3 install -q kerberos
 RUN pip3 install -q Flask-Kerberos
-# ENV KRB5_KTNAME /usr/local/var/service-keytab
+ENV KRB5_KTNAME /usr/local/var/service-keytab
 
 RUN apt -y install vim
 RUN mkdir /usr/local/var

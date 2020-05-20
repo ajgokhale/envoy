@@ -17,6 +17,7 @@ services:
       - "8001:8001"
 
   service1:
+    hostname: kbr_service1_1.kbr_envoymesh
     build:
       context: .
       dockerfile: Dockerfile-service-kbr
