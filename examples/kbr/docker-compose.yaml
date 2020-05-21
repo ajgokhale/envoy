@@ -8,7 +8,9 @@ services:
     volumes:
       - ./front-envoy.yaml:/etc/front-envoy.yaml
     networks:
-      - envoymesh
+      envoymesh:
+        aliases:
+          - proxy.example.com
     expose:
       - "80"
       - "8001"
@@ -33,6 +35,22 @@ services:
       - "80"
 
   service2:
+    hostname: kbr_service2_1.kbr_envoymesh
+    build:
+      context: .
+      dockerfile: Dockerfile-service-kbr
+    volumes:
+      - ./service-envoy.yaml:/etc/service-envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - service2.example.com
+    environment:
+      - SERVICE_NAME=1
+    expose:
+      - "80"
+
+  kdc:
     build:
       context: .
       dockerfile: Dockerfile-masterkdc
